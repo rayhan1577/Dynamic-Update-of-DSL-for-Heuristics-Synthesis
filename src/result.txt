@@ -1,0 +1,1 @@
+md-8: ((abs((y - y_goal)) + abs((x - x_goal))) + max(abs((y - y_goal)), abs((x - x_goal))))

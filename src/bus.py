@@ -269,7 +269,7 @@ class BottomUpSearch():
                     print('Program ', program.toString(), ' raised an exception')
 
                 if (expanded < best_expanded_value and (isinstance(program,Max) or isinstance(program,Abs) or isinstance(program,Plus))):
-                    total_cost, total_expanded, program, error_astar = eval_program_paths((program, self.pairs_start_goal, map_name))
+                    total_cost, total_expanded, program, error_astar = eval_program((program, self.pairs_start_goal, map_name))
                     best_expanded_value = expanded
                     incumbent_program = program
                     self.augment.append(program)
@@ -278,6 +278,8 @@ class BottomUpSearch():
                         self.augment.append(Min(incumbent_program.left,incumbent_program.right))
                     print("Updating DSL")
                     print("Restarting search")
+                    print("Updating DSL", file=self.file)
+                    print("Restarting search",file=self.file)
                     self.plist = ProgramList()
                     self.plist.init_plist(constant_values, variables_list)
                     for z in self.augment:
