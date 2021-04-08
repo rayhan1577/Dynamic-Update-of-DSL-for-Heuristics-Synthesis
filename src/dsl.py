@@ -82,6 +82,8 @@ class Abs(Node):
             
             for p in programs:
                 abs_p = Abs(p)
+                #print(size)
+                #print(abs_p.toString())
                 new_programs.append(abs_p)
 
                 yield abs_p
@@ -109,22 +111,15 @@ class Min(Node):
     def grow(plist, size):       
         new_programs = []
         # defines which nodes are accepted in the AST
-        accepted_nodes = set([VarScalar.className(),
-                              Plus.className(),
-                              Times.className(),
-                              Minus.className(), 
-                              Constant.className(),
-                              Min.className(),
-                              Max.className(),
-                              Abs.className()])
+        accepted_nodes = set([Abs.className()])
         
         # generates all combinations of cost of size 2 varying from 1 to size - 1
         combinations = list(itertools.combinations_with_replacement(range(1, size - 1), 2))
         
         for c in combinations:           
             # skip if the cost combination exceeds the limit
-            if c[0] + c[1] + 1 < size:
-                continue
+            #if c[0] + c[1] + 1 > size:
+            #    continue
                     
             # retrive bank of programs with costs c[0], c[1], and c[2]
             program_set1 = plist.get_programs(c[0])
@@ -171,22 +166,23 @@ class Max(Node):
     def grow(plist, size):       
         new_programs = []
         # defines which nodes are accepted in the AST
-        accepted_nodes = set([VarScalar.className(),
+        accepted_nodes = set([Abs.className()])
+        """
+        VarScalar.className(),
                               Plus.className(),
                               Times.className(),
                               Minus.className(), 
                               Constant.className(),
                               Max.className(),
                               Min.className(),
-                              Abs.className()])
-        
+        """
         # generates all combinations of cost of size 2 varying from 1 to size - 1
         combinations = list(itertools.combinations_with_replacement(range(1, size - 1), 2))
 
         for c in combinations:           
             # skip if the cost combination exceeds the limit
-            if c[0] + c[1] + 1< size:
-                continue
+            #if c[0] + c[1] + 1> size:
+            #    continue
                     
             # retrive bank of programs with costs c[0], c[1], and c[2]
             program_set1 = plist.get_programs(c[0])
@@ -242,8 +238,8 @@ class Times(Node):
 
         for c in combinations:           
             # skip if the cost combination exceeds the limit
-            if c[0] + c[1] + 1 < size:
-                continue
+            #if c[0] + c[1] + 1 > size:
+            #    continue
                     
             # retrive bank of programs with costs c[0], c[1], and c[2]
             program_set1 = plist.get_programs(c[0])
@@ -299,8 +295,8 @@ class Minus(Node):
 
         for c in combinations:                       
             # skip if the cost combination exceeds the limit
-            if c[0] + c[1] + 1 < size:
-                continue
+            #if c[0] + c[1] + 1 > size:
+            #    continue
                 
             # retrive bank of programs with costs c[0], c[1], and c[2]
             program_set1 = plist.get_programs(c[0])
@@ -356,8 +352,8 @@ class Plus(Node):
 
         for c in combinations:                       
             # skip if the cost combination exceeds the limit
-            if c[0] + c[1] + 1 < size:
-                continue
+            #if c[0] + c[1] + 1 > size:
+            #    continue
                 
             # retrive bank of programs with costs c[0], c[1], and c[2]
             program_set1 = plist.get_programs(c[0])

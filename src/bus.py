@@ -18,13 +18,13 @@ class ProgramList():
         self.number_programs = 0
     
     def insert(self, program):       
-        if program.getCost() not in self.plist:
-            self.plist[program.getCost()] = {}
+        if program.size not in self.plist:
+            self.plist[program.size] = {}
         
-        if program.className() not in self.plist[program.getCost()]:
-            self.plist[program.getCost()][program.className()] = []
+        if program.className() not in self.plist[program.size]:
+            self.plist[program.size][program.className()] = []
         
-        self.plist[program.getCost()][program.className()].append(program)
+        self.plist[program.size][program.className()].append(program)
         self.number_programs += 1
         
     def init_plist(self, constant_values, variables_list):
@@ -133,6 +133,8 @@ class BottomUpSearch():
     
     def __init__(self, ncpus):
         self.ncpus = ncpus
+        self.file=open("a.txt", "w")
+        self.augment=[]
         
     def generate_training_data(self, map_name, number_paths):
         gridded_map = Map(map_name)
@@ -179,12 +181,13 @@ class BottomUpSearch():
     def grow(self, operations, size):
         new_programs = []
         for op in operations:
+            #print(self.plist.get_number_programs(),size)
             for p in op.grow(self.plist, size):
+
                 if p.toString() not in self.closed_list:
                     self.closed_list.add(p.toString())
-                    
                     values = self.compute_values_for_equivalence(p)
-                    
+                    print(p.toString(), file=self.file)
                     if values not in self.outputs:
                         self.outputs.add(values)
                         new_programs.append(p)
@@ -234,7 +237,7 @@ class BottomUpSearch():
         while current_size <= bound:
             
             number_evaluations_bound = 0
-
+            #print("current Size", current_size)
             new_programs = self.grow(operations, current_size)
             
             if len(new_programs) == 0:
@@ -264,16 +267,23 @@ class BottomUpSearch():
                 
                 if error:
                     print('Program ', program.toString(), ' raised an exception')
-            
-                if expanded < best_expanded_value:
-                    total_cost, total_expanded, program, error_astar = eval_program((program, self.pairs_start_goal, map_name))
-                    
+
+                if (expanded < best_expanded_value and (isinstance(program,Max) or isinstance(program,Abs) or isinstance(program,Plus))):
+                    total_cost, total_expanded, program, error_astar = eval_program_paths((program, self.pairs_start_goal, map_name))
                     best_expanded_value = expanded
-                    incumbent_program = program      
-                    
-                    print(incumbent_program.toString(), cost, expanded, current_size, total_cost, total_expanded, error_astar)      
-            
-            time_end = time.time()    
+                    incumbent_program = program
+                    self.augment.append(program)
+                    print(incumbent_program.toString(), cost, expanded, current_size, total_cost, total_expanded,error_astar)
+                    if(isinstance(incumbent_program,Max)):
+                        self.augment.append(Min(incumbent_program.left,incumbent_program.right))
+                    print("Updating DSL")
+                    print("Restarting search")
+                    self.plist = ProgramList()
+                    self.plist.init_plist(constant_values, variables_list)
+                    for z in self.augment:
+                        self.plist.insert(z)
+
+            time_end = time.time()
             print('Size: ', current_size, 
                   ' Evaluations: ', number_evaluations_bound, 
                   ' Total: ', number_evaluations, 
@@ -299,7 +309,7 @@ class BottomUpSearch():
         self.start_states = []
         self.goal_states = []
         self.generated_g_values = []
-        
+
         program = Plus(
                         Max(
                             Abs(Minus(VarScalar('x'), VarScalar('x_goal'))), 
@@ -323,7 +333,7 @@ class BottomUpSearch():
         
         cost, expanded, program, error = eval_program_paths((program, self.training_data))
         print('Statistics for MD-8: ', cost, expanded, program.toString(), error)
-        
+
 #         cost, expanded, program, error = eval_program_paths((program_md4, self.training_data))
 #         print('Statistics for MD-4: ', cost, expanded, program.toString(), error)
 # #         eval_program((program, self.start_states, self.goal_states, map_name))

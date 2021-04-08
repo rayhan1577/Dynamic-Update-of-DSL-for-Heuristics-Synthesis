@@ -16,7 +16,7 @@ class EvalExpansions(Evaluation):
     def __init__(self, map_name, number_problems):
         self.map_name = map_name
         
-        self.gridded_map = Map("dao-map/brc000d.map")
+        self.gridded_map = Map("brc000d.map")
         
         self.start_states = []
         self.goal_states = []
