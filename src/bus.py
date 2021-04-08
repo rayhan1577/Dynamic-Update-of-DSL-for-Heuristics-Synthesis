@@ -249,7 +249,7 @@ class BottomUpSearch():
                 #                 args = ((p, self.start_states, self.goal_states, map_name) for p in new_programs)
                 #                 results = executor.map(eval_program, args)
                 args = ((p, self.training_data) for p in new_programs if(p.toString() not in self.closed_list and self.compute_values_for_equivalence(p) not in self.outputs))
-                results = executor.map(eval_program, args)
+                results = executor.map(eval_program_paths, args)
             for result in results:
                 cost = result[0]
                 expanded = result[1]
