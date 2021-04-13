@@ -111,7 +111,14 @@ class Min(Node):
     def grow(plist, size):       
         new_programs = []
         # defines which nodes are accepted in the AST
-        accepted_nodes = set([Abs.className()])
+        accepted_nodes = set([Abs.className(),
+                              VarScalar.className(),
+                              Plus.className(),
+                              Times.className(),
+                              Minus.className(),
+                              Constant.className(),
+                              Max.className(),
+                              Min.className()])
         
         # generates all combinations of cost of size 2 varying from 1 to size - 1
         combinations = list(itertools.combinations_with_replacement(range(1, size - 1), 2))
@@ -166,16 +173,15 @@ class Max(Node):
     def grow(plist, size):       
         new_programs = []
         # defines which nodes are accepted in the AST
-        accepted_nodes = set([Abs.className()])
-        """
-        VarScalar.className(),
+        accepted_nodes = set([Abs.className(),
+                              VarScalar.className(),
                               Plus.className(),
                               Times.className(),
                               Minus.className(), 
                               Constant.className(),
                               Max.className(),
-                              Min.className(),
-        """
+                              Min.className()])
+
         # generates all combinations of cost of size 2 varying from 1 to size - 1
         combinations = list(itertools.combinations_with_replacement(range(1, size - 1), 2))
 
