@@ -189,9 +189,15 @@ class BottomUpSearch():
     def grow(self, operations, size):
         new_programs = []
         for op in operations:
-            # print(self.plist.get_number_programs(),size)
             for p in op.grow(self.plist, size):
+                if p.toString() not in self.closed_list:
+                    self.closed_list.add(p.toString())
+                    values = self.compute_values_for_equivalence(p)
+                    if values not in self.outputs:
+                        self.outputs.add(values)
                         new_programs.append(p)
+
+
 
         return new_programs
 
@@ -224,10 +230,12 @@ class BottomUpSearch():
         self.plist = ProgramList()
         self.plist.init_plist(constant_values, variables_list)
 
+        print('Number of programs: ', self.plist.get_number_programs())
 
         self._variables_list = variables_list
 
-
+        best_expanded_value = math.inf
+        incumbent_program = None
 
         number_evaluations = 0
         current_size = 0
@@ -235,30 +243,34 @@ class BottomUpSearch():
         while current_size <= bound:
 
             number_evaluations_bound = 0
+
             new_programs = self.grow(operations, current_size)
 
             if len(new_programs) == 0:
                 current_size += 1
                 continue
-            self.generated=len(new_programs)
-            self.iteration+=1
+            for i in new_programs:
+                self.plist.insert(i)           
+            print('Generated: ', len(new_programs), ' Size: ', current_size)
+            for i in new_programs:
+                self.plist.insert(i)
+            current_size += 1
+            """
             number_evaluations += len(new_programs)
             number_evaluations_bound += len(new_programs)
 
             time_start = time.time()
             with ProcessPoolExecutor(max_workers=self.ncpus) as executor:
-                #                 args = ((p, self.start_states, self.goal_states, map_name) for p in new_programs)
+                #                 args = ((p, self.start_states, self.goal_states, map_name) for p in new_programs) 
                 #                 results = executor.map(eval_program, args)
-                args = ((p, self.training_data) for p in new_programs if(p.toString() not in self.closed_list and self.compute_values_for_equivalence(p) not in self.outputs))
+                args = ((p, self.training_data) for p in new_programs)
                 results = executor.map(eval_program_paths, args)
             for result in results:
-                self.evaluated+=1
                 cost = result[0]
                 expanded = result[1]
                 program = result[2]
                 error = result[3]
-                self.closed_list.add(program.toString())
-                self.outputs.add(self.compute_values_for_equivalence(program))
+
                 #                 print(program.toString(), cost)
                 program.setCost(cost)
                 self.plist.insert(program)
@@ -266,27 +278,24 @@ class BottomUpSearch():
                 if error:
                     print('Program ', program.toString(), ' raised an exception')
 
-                if (expanded < self.best_expanded_value and (
-                        isinstance(program, Max) or isinstance(program, Abs) or isinstance(program, Plus))):
-                    total_cost, total_expanded, program, error_astar = eval_program_paths((program, self.pairs_start_goal, map_name))
-                    self.best_expanded_value = expanded
-                    self.incumbent_program = program
-                    self.augment.append(program)
+                if expanded < best_expanded_value:
+                    total_cost, total_expanded, program, error_astar = eval_program(
+                        (program, self.pairs_start_goal, map_name))
 
-                    if(self.incumbent_program!= None):
-                        print("adding", self.incumbent_program.toString())
-                        self.step+=1
-                        self.iteration=0
-                        self.plist = ProgramList()
-                        self.plist.init_plist(constant_values, variables_list)
-                        for z in self.augment:
-                            self.plist.insert(z)
-            print("generated", self.generated)
-            self.evaluated=0
+                    best_expanded_value = expanded
+                    incumbent_program = program
+
+                    print(incumbent_program.toString(), cost, expanded, current_size, total_cost, total_expanded,
+                          error_astar)
+
             time_end = time.time()
-            current_size += 1
-
-        return self.incumbent_program, number_evaluations
+            print('Size: ', current_size,
+                  ' Evaluations: ', number_evaluations_bound,
+                  ' Total: ', number_evaluations,
+                  ' Time: ', time_end - time_start)
+            
+            """
+        #return incumbent_program, number_evaluations
 
     def synthesize(self,
                    bound,
@@ -305,7 +314,7 @@ class BottomUpSearch():
         self.start_states = []
         self.goal_states = []
         self.generated_g_values = []
-
+        """
         program = Plus(
             Max(
                 Abs(Minus(VarScalar('x'), VarScalar('x_goal'))),
@@ -322,14 +331,14 @@ class BottomUpSearch():
         #                             Abs(Minus(VarScalar('y'), VarScalar('y_goal')))
         #                           )
 
-        #total_cost, total_expanded, program, error_astar = eval_program((program, self.pairs_start_goal, map_name))
+        total_cost, total_expanded, program, error_astar = eval_program((program, self.pairs_start_goal, map_name))
 
-        #print('Statistics A* with MD on training data (SKETCH): ', total_cost, total_expanded)
-        #print(program.toString())
+        print('Statistics A* with MD on training data (SKETCH): ', total_cost, total_expanded)
+        print(program.toString())
 
-        #cost, expanded, program, error = eval_program_paths((program, self.training_data))
-        #print('Statistics for MD-8: ', cost, expanded, program.toString(), error)
-
+        cost, expanded, program, error = eval_program_paths((program, self.training_data))
+        print('Statistics for MD-8: ', cost, expanded, program.toString(), error)
+        """
         #         cost, expanded, program, error = eval_program_paths((program_md4, self.training_data))
         #         print('Statistics for MD-4: ', cost, expanded, program.toString(), error)
         # #         eval_program((program, self.start_states, self.goal_states, map_name))
@@ -338,10 +347,7 @@ class BottomUpSearch():
             self.goal_states.append(self.gridded_map.random_state())
             self.generated_g_values.append(random.randint(50, 200))
 
-        solution, evals = self.search(bound,
-                                      operations,
-                                      constant_values,
-                                      variables_list,
-                                      map_name)
 
-        return solution, evals
+        
+        self.search(bound,operations,constant_values,variables_list,map_name)
+
