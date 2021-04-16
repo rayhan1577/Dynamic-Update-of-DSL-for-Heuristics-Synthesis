@@ -7,7 +7,7 @@ def main():
     
     synthesizer = BottomUpSearch(ncpus)
     
-    p, num = synthesizer.synthesize(11,[Abs, Times, Plus, Minus, Min, Max], [0.5, 2], ['y','x','y_goal', 'x_goal', ], "brc000d.map",50,50)
+    p, num = synthesizer.synthesize(12,[Abs, Times, Plus, Minus, Min, Max], [0.5, 2], ['y','x','y_goal', 'x_goal', ], "brc000d.map",50,50)
      
     if p is not None:
         print(p.toString(), num)
