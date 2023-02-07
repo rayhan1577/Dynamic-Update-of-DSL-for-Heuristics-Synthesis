@@ -3,7 +3,7 @@
 **Idea to update the DSL dynamically for heuristics Synthesis. This project was completed as course project under supervision of Dr. Levi Lelis.**
 (This is not the exact implementation of the papers)
 ---
-n this project, we implemented a methodology where the DSL will be updated dynam-
+In this project, we implemented a methodology where the DSL will be updated dynam-
 ically based on the evaluation score of the generated heuristics. That is if a heuristics has
 a better evaluation score, we add that heuristics to our DSL and restart the search.This
 provides a great advantage. That is we can combine strong heuristics among themselves and
