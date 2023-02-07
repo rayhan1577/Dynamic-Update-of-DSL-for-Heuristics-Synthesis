@@ -1,7 +1,7 @@
 # Dynamic-Update-of-DSL-for-Heuristics-Synthesis
 # Overview
 **Idea to update the DSL dynamically for heuristics Synthesis. This project was completed as course project under supervision of Dr. Levi Lelis.**
-(This is not the exact implementation of the papers)
+
 ---
 In this project, we implemented a methodology where the DSL will be updated dynam-
 ically based on the evaluation score of the generated heuristics. That is if a heuristics has
