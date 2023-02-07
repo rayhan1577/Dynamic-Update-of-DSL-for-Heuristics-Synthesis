@@ -1,11 +1,15 @@
 # Dynamic-Update-of-DSL-for-Heuristics-Synthesis
 # Overview
-**This project consists of synthesis of heuristics using the idea of the following papers.**
+**Idea to update the DSL dynamically for heuristics Synthesis. This project was completed as course project under supervision of Dr. Levi Lelis.**
 (This is not the exact implementation of the papers)
 ---
-- Barke, S., Peleg, H., Polikarpova, N. (2020). Just-in-time learning for bottom-up enumerative synthesis. Proceedings of the ACM on Programming Languages, 4(OOPSLA), 1-29.
-- Odena, Augustus, et al. ”BUSTLE: Bottom-up program-Synthesis Through Learning-guided Exploration.” arXiv
-preprint arXiv:2007.14381 (2020).
+n this project, we implemented a methodology where the DSL will be updated dynam-
+ically based on the evaluation score of the generated heuristics. That is if a heuristics has
+a better evaluation score, we add that heuristics to our DSL and restart the search.This
+provides a great advantage. That is we can combine strong heuristics among themselves and
+with other non terminal nodes in the first few iterations of the search. Thus we can get a
+heuristics with larger AST size by generating few programs. The advantage of this approach
+is, we don’t have to evaluate all the programs to reach a program of large AST size.
 
 ---
 
