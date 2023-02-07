@@ -21,7 +21,7 @@ $ virtualenv venv --python=python3
 $ source venv/bin/activate
 
 # clone the repo
-$git clone https://github.com/rayhan1577/Heuristics_synthesis.git
+$git clone https://github.com/rayhan1577/Dynamic-Update-of-DSL-for-Heuristics-Synthesis.git
 
 # change directory to the repo where we have requirements file
 $ cd Heuristics_synthesis
